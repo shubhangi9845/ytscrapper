@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, request,jsonify
 from flask_cors import CORS, cross_origin
 from selenium import webdriver
@@ -15,7 +16,11 @@ import requests
 option = Options()
 option.headless = True
 # DRIVER_PATH = r'/Users/sangrampatil/PycharmProjects/ytscrpper/chromedriver'
-driver = webdriver.Chrome(executable_path=DRIVER_PATH, options=option)
+# driver = webdriver.Chrome(executable_path=DRIVER_PATH, options=option)
+option.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+driver = webdriver.Chrome(executable_path=os.environ.get("DRIVER_PATH"), options=option)
+
+
 # mydb = conn.connect(
 #     host="localhost",
 #     user="root",
