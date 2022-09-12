@@ -14,7 +14,7 @@ import requests
 
 option = Options()
 option.headless = True
-DRIVER_PATH = r'/Users/sangrampatil/PycharmProjects/ytscrpper/chromedriver'
+# DRIVER_PATH = r'/Users/sangrampatil/PycharmProjects/ytscrpper/chromedriver'
 driver = webdriver.Chrome(executable_path=DRIVER_PATH, options=option)
 # mydb = conn.connect(
 #     host="localhost",
