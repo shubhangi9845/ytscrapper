@@ -14,9 +14,11 @@ import base64
 import requests
 
 option = Options()
+option.add_argument('--no-sandbox')
 option.headless = True
 # DRIVER_PATH = r'/Users/sangrampatil/PycharmProjects/ytscrpper/chromedriver'
 # driver = webdriver.Chrome(executable_path=DRIVER_PATH, options=option)
+# server code
 option.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
 driver = webdriver.Chrome(executable_path=os.environ.get("DRIVER_PATH"), options=option)
 
