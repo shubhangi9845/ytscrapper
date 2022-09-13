@@ -145,9 +145,9 @@ def index():
                 mydb.commit()
 
                 #### Update MangoDB Comments
-                # client = pymongo.MongoClient(
-                #     "mongodb+srv://shubhangi:sangram123@sangram.jttnwlv.mongodb.net/?retryWrites=true&w=majority")
-                # database = client['youtube']
+                client = pymongo.MongoClient(
+                    "mongodb+srv://shubhangi:sangram123@sangram.jttnwlv.mongodb.net/?retryWrites=true&w=majority")
+                database = client['youtube']
                 # collection = database['comments']
                 # for (ids, author, text) in zip(comment_ids, comment_by, comment_text):
                 #     filter = {'_id': ids}
