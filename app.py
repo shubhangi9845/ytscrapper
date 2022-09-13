@@ -64,10 +64,10 @@ def index():
             time.sleep(1)
             print("CHANNEL:" + CHANNEL_URL)
             first_title = driver.find_element_by_xpath('//*[@id="video-title"]')
-            no_of_pagedowns = 10
+            no_of_pagedowns = 5
             while no_of_pagedowns:
                 first_title.send_keys(Keys.PAGE_DOWN)
-                time.sleep(0.2)
+                time.sleep(0.1)
                 no_of_pagedowns -= 1
             names = driver.find_elements_by_xpath('//*[@id="video-title"]')
             titles = []
