@@ -15,6 +15,7 @@ import requests
 
 option = Options()
 option.add_argument('--no-sandbox')
+option.add_argument('disable-dev-shm-usage')
 option.headless = True
 # DRIVER_PATH = r'/Users/sangrampatil/PycharmProjects/ytscrpper/chromedriver'
 # driver = webdriver.Chrome(executable_path=DRIVER_PATH, options=option)
