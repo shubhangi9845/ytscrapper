@@ -21,6 +21,7 @@ option.headless = True
 # Driver local path
 # DRIVER_PATH = r'/Users/sangrampatil/PycharmProjects/ytscrpper/chromedriver'
 # driver = webdriver.Chrome(executable_path=DRIVER_PATH, options=option)
+
 # Driver server path
 option.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
 driver = webdriver.Chrome(executable_path=os.environ.get("DRIVER_PATH"), options=option)
