@@ -17,9 +17,11 @@ option = Options()
 option.add_argument('--no-sandbox')
 option.add_argument('disable-dev-shm-usage')
 option.headless = True
+
+# Driver local path
 # DRIVER_PATH = r'/Users/sangrampatil/PycharmProjects/ytscrpper/chromedriver'
 # driver = webdriver.Chrome(executable_path=DRIVER_PATH, options=option)
-# server code
+# Driver server path
 option.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
 driver = webdriver.Chrome(executable_path=os.environ.get("DRIVER_PATH"), options=option)
 
@@ -30,6 +32,7 @@ driver = webdriver.Chrome(executable_path=os.environ.get("DRIVER_PATH"), options
 #     passwd="vardhan#23",
 #     database="testdb"
 # )
+
 mydb = conn.connect(
   user='shubhangi@projectdemo',
   password='varshu#23',
@@ -88,7 +91,7 @@ def index():
             for link in links[:5]:
                 driver.get(link)
                 driver.maximize_window()
-                time.sleep(2)
+                time.sleep(5)
                 prev_h = 0
                 while True:
                     height = driver.execute_script("""
