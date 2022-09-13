@@ -91,7 +91,7 @@ def index():
             for link in links[:5]:
                 driver.get(link)
                 driver.maximize_window()
-                time.sleep(5)
+                time.sleep(1)
                 prev_h = 0
                 while True:
                     height = driver.execute_script("""
@@ -106,7 +106,7 @@ def index():
                                """)
                     driver.execute_script(f"window.scrollTo({prev_h},{prev_h + 200})")
                     # fix the time sleep value according to your network connection
-                    time.sleep(1)
+                    time.sleep(0.5)
                     prev_h += 200
                     if prev_h >= height:
                         break
