@@ -57,6 +57,7 @@ def index():
             CHANNEL_URL = request.form['content'].replace(" ","")
 
             ########## Get video Links ####################
+            channel_id = parse.urlparse(CHANNEL_URL).path.split('/')[-1]
             channel_videos_url = CHANNEL_URL + '/videos'
             driver.get(channel_videos_url)
             driver.maximize_window()
@@ -82,11 +83,7 @@ def index():
             print('LINKS:{}'.format(links))
 
             ############ Get Video information #################
-            channel_id = parse.urlparse(CHANNEL_URL).path.split('/')[-1]
-            # filename = channel_id + ".csv"
-            # fw = open(filename, "w")
-            # headers = "Channel, Link, Title, Thumbnail, Likes, Comments \n"
-            # fw.write(headers)
+
             videos = []
             for link in links[:5]:
                 driver.get(link)
@@ -121,25 +118,25 @@ def index():
                 print(likes)
                 comment_count = video_bs.select_one('#count > yt-formatted-string > span:nth-child(1)').text
                 print(comment_count)
-                text_div = video_bs.select("#content #content-text")
-                comment_text = []
-                for texts in text_div:
-                    text = texts.text
-                    comment_text.append(text)
-                print(comment_text)
-                author_div = video_bs.select("#content #author-text > span")
-                comment_by = []
-                for auth in author_div:
-                    author = auth.text
-                    comment_by.append(author)
-                print(comment_by)
-                comment_time_div = video_bs.select('#header-author > yt-formatted-string > a')
-                comment_ids = []
-                for id in comment_time_div:
-                    comment_id_url = id.get('href')
-                    url_id = parse.parse_qs(parse.urlparse(comment_id_url).query)['lc'][0]
-                    comment_ids.append(url_id)
-                print(comment_ids)
+                # text_div = video_bs.select("#content #content-text")
+                # comment_text = []
+                # for texts in text_div:
+                #     text = texts.text
+                #     comment_text.append(text)
+                # print(comment_text)
+                # author_div = video_bs.select("#content #author-text > span")
+                # comment_by = []
+                # for auth in author_div:
+                #     author = auth.text
+                #     comment_by.append(author)
+                # print(comment_by)
+                # comment_time_div = video_bs.select('#header-author > yt-formatted-string > a')
+                # comment_ids = []
+                # for id in comment_time_div:
+                #     comment_id_url = id.get('href')
+                #     url_id = parse.parse_qs(parse.urlparse(comment_id_url).query)['lc'][0]
+                #     comment_ids.append(url_id)
+                # print(comment_ids)
 
                 ##### Update in MySQL
                 s = "INSERT INTO ChannelVideos (ChannelURL, VideoLink, Title, ThumbnailURL, Likes, Comments) VALUES(%s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE Title=VALUES(Title), ThumbnailURL=VALUES(ThumbnailURL), Likes=VALUES(Likes), Comments=VALUES(Comments)"
@@ -148,20 +145,20 @@ def index():
                 mydb.commit()
 
                 #### Update MangoDB Comments
-                client = pymongo.MongoClient(
-                    "mongodb+srv://shubhangi:sangram123@sangram.jttnwlv.mongodb.net/?retryWrites=true&w=majority")
-                database = client['youtube']
-                collection = database['comments']
-                for (ids, author, text) in zip(comment_ids, comment_by, comment_text):
-                    filter = {'_id': ids}
-                    cm_data = {"$set":
-                                   {'VideoLink': link,
-                                    'Author': author,
-                                    'Text': text}}
-                    collection.update_one(filter, cm_data, upsert=True)
-                cursor = collection.find({'VideoLink': link})
-                for record in cursor:
-                    print(record)
+                # client = pymongo.MongoClient(
+                #     "mongodb+srv://shubhangi:sangram123@sangram.jttnwlv.mongodb.net/?retryWrites=true&w=majority")
+                # database = client['youtube']
+                # collection = database['comments']
+                # for (ids, author, text) in zip(comment_ids, comment_by, comment_text):
+                #     filter = {'_id': ids}
+                #     cm_data = {"$set":
+                #                    {'VideoLink': link,
+                #                     'Author': author,
+                #                     'Text': text}}
+                #     collection.update_one(filter, cm_data, upsert=True)
+                # cursor = collection.find({'VideoLink': link})
+                # for record in cursor:
+                #     print(record)
 
                 #### Update MangoDB Thumbnail
                 b64_img = base64.b64encode(requests.get(thumbnail).content).decode('utf-8')
