@@ -64,12 +64,16 @@ def index():
             driver.maximize_window()
             time.sleep(1)
             print("CHANNEL:" + CHANNEL_URL)
+
+            # To scroll page to get first 50 videos
             first_title = driver.find_element_by_xpath('//*[@id="video-title"]')
             no_of_pagedowns = 5
             while no_of_pagedowns:
                 first_title.send_keys(Keys.PAGE_DOWN)
                 time.sleep(0.1)
                 no_of_pagedowns -= 1
+
+            # To scrape first 50Videos
             names = driver.find_elements_by_xpath('//*[@id="video-title"]')
             titles = []
             for name in names[:50]:
@@ -131,6 +135,12 @@ def index():
                     author = auth.text
                     comment_by.append(author)
                 print(comment_by)
+                author_thumbs = video_bs.select('#content #img')
+                auth_thumbs = []
+                for thumb in author_thumbs:
+                    thumb_url = thumb.get('src')
+                    auth_thumbs.append(thumb_url)
+                print(auth_thumbs)
                 comment_time_div = video_bs.select('#header-author > yt-formatted-string > a')
                 comment_ids = []
                 for id in comment_time_div:
@@ -176,7 +186,7 @@ def index():
                 videos.append(mydict)
 
             driver.quit()
-            return render_template('results.html', reviews=videos[0:(len(videos) - 1)])
+            return render_template('results.html', reviews=videos[0:(len(videos))])
         except Exception as e:
             print('The Exception message is: ', e)
             return 'something is wrong'
