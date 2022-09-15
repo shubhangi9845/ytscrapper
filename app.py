@@ -31,15 +31,16 @@ driver = webdriver.Chrome(executable_path=os.environ.get("DRIVER_PATH"), options
 #     host="localhost",
 #     user="root",
 #     passwd="vardhan#23",
-#     database="testdb"
+#     database="testdb",
+#     charset='utf8mb4'
 # )
 
 mydb = conn.connect(
   user='shubhangi@projectdemo',
   password='varshu#23',
   host='projectdemo.mysql.database.azure.com',
-  # ssl_ca=r'/Users/sangrampatil/PycharmProjects/ytscrpper/DigiCertGlobalRootG2.crt.pem',
-  database="testdb"
+  database="testdb",
+  charset='utf8mb4'
 )
 mycursor = mydb.cursor()
 
@@ -67,22 +68,23 @@ def index():
 
             # To scroll page to get first 50 videos
             first_title = driver.find_element_by_xpath('//*[@id="video-title"]')
-            no_of_pagedowns = 5
+            no_of_pagedowns = 8
             while no_of_pagedowns:
                 first_title.send_keys(Keys.PAGE_DOWN)
                 time.sleep(0.1)
                 no_of_pagedowns -= 1
 
-            # To scrape first 50Videos
+            # Enter number of videos to scrape data
+            count = 50
             names = driver.find_elements_by_xpath('//*[@id="video-title"]')
             titles = []
-            for name in names[:50]:
+            for name in names[:count]:
                 title = name.text
                 titles.append(title)
             print('TITLES:{}'.format(titles))
             video_urls = driver.find_elements_by_xpath('//*[@id="video-title"]')
             links = []
-            for link in video_urls[:50]:
+            for link in video_urls[:count]:
                 url = link.get_attribute('href')
                 links.append(url)
             print('LINKS:{}'.format(links))
@@ -108,7 +110,7 @@ def index():
                                """)
                     driver.execute_script(f"window.scrollTo({prev_h},{prev_h + 200})")
                     # fix the time sleep value according to your network connection
-                    time.sleep(0.5)
+                    time.sleep(0.2)
                     prev_h += 200
                     if prev_h >= height:
                         break
@@ -119,29 +121,31 @@ def index():
                 print(link)
                 thumbnail = video_bs.select_one('#watch7-content > link:nth-child(11)').get('href')
                 print(thumbnail)
-                likes = video_bs.select_one('#top-level-buttons-computed > ytd-toggle-button-renderer:nth-child(1) > a > yt-formatted-string').text
+                likes_txt = video_bs.select_one('#top-level-buttons-computed > ytd-toggle-button-renderer:nth-child(1) > a > yt-formatted-string').get('aria-label')
+                likes = ''.join(i for i in likes_txt if i.isdigit())
                 print(likes)
                 comment_count = video_bs.select_one('#count > yt-formatted-string > span:nth-child(1)').text
                 print(comment_count)
-                text_div = video_bs.select("#content #content-text")
+                text_div = video_bs.select("#comment #content #content-text")
                 comment_text = []
                 for texts in text_div:
                     text = texts.text
                     comment_text.append(text)
                 print(comment_text)
-                author_div = video_bs.select("#content #author-text > span")
+                author_div = video_bs.select("#comment #author-text > span")
                 comment_by = []
                 for auth in author_div:
-                    author = auth.text
+                    author = auth.text.strip()
                     comment_by.append(author)
                 print(comment_by)
-                author_thumbs = video_bs.select('#content #img')
+                author_thumbs = video_bs.select('#comment #author-thumbnail #img')
+
                 auth_thumbs = []
                 for thumb in author_thumbs:
                     thumb_url = thumb.get('src')
                     auth_thumbs.append(thumb_url)
                 print(auth_thumbs)
-                comment_time_div = video_bs.select('#header-author > yt-formatted-string > a')
+                comment_time_div = video_bs.select('#comment #header-author > yt-formatted-string > a')
                 comment_ids = []
                 for id in comment_time_div:
                     comment_id_url = id.get('href')
