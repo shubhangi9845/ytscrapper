@@ -42,7 +42,7 @@ mydb = conn.connect(
   database="testdb",
   charset='utf8mb4'
 )
-mycursor = mydb.cursor()
+
 
 app = Flask(__name__)
 
@@ -157,6 +157,7 @@ def index():
                 print(comment_ids)
 
                 ##### Update in MySQL
+                mycursor = mydb.cursor()
                 s = "INSERT INTO ChannelVideos (ChannelID, VideoID, ChannelName, VideoLink, Title, ThumbnailURL, Likes, Comments) VALUES(%s, %s, %s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE ChannelName=VALUES(ChannelName), Title=VALUES(Title), ThumbnailURL=VALUES(ThumbnailURL), Likes=VALUES(Likes), Comments=VALUES(Comments)"
                 s1 = (channel_id, video_id, channel_name, link, title, thumbnail, likes, comment_count)
                 mycursor.execute(s, s1)
