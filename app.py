@@ -19,12 +19,12 @@ option.add_argument('disable-dev-shm-usage')
 option.headless = True
 
 # Driver local path
-# DRIVER_PATH = r'/Users/sangrampatil/PycharmProjects/ytscrpper/chromedriver'
-# driver = webdriver.Chrome(executable_path=DRIVER_PATH, options=option)
+DRIVER_PATH = r'/Users/sangrampatil/PycharmProjects/ytscrpper/chromedriver'
+driver = webdriver.Chrome(executable_path=DRIVER_PATH, options=option)
 
 # Driver server path
-option.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-driver = webdriver.Chrome(executable_path=os.environ.get("DRIVER_PATH"), options=option)
+# option.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+# driver = webdriver.Chrome(executable_path=os.environ.get("DRIVER_PATH"), options=option)
 
 
 # mydb = conn.connect(
@@ -67,6 +67,8 @@ def index():
             print("CHANNEL:" + CHANNEL_URL)
 
             # To scroll page to get first 50 videos
+            channel_name = driver.find_element_by_xpath('//*[@id="channel-name"]//yt-formatted-string').text
+            print(channel_name)
             first_title = driver.find_element_by_xpath('//*[@id="video-title"]')
             no_of_pagedowns = 8
             while no_of_pagedowns:
@@ -119,6 +121,7 @@ def index():
                 title = video_bs.select_one('#container > h1 > yt-formatted-string').text
                 print(title)
                 print(link)
+                video_id = parse.parse_qs(parse.urlparse(link).query)['v'][0]
                 thumbnail = video_bs.select_one('#watch7-content > link:nth-child(11)').get('href')
                 print(thumbnail)
                 likes_txt = video_bs.select_one('#top-level-buttons-computed > ytd-toggle-button-renderer:nth-child(1) > a > yt-formatted-string').get('aria-label')
@@ -154,8 +157,8 @@ def index():
                 print(comment_ids)
 
                 ##### Update in MySQL
-                s = "INSERT INTO ChannelVideos (ChannelURL, VideoLink, Title, ThumbnailURL, Likes, Comments) VALUES(%s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE Title=VALUES(Title), ThumbnailURL=VALUES(ThumbnailURL), Likes=VALUES(Likes), Comments=VALUES(Comments)"
-                s1 = (CHANNEL_URL, link, title, thumbnail, likes, comment_count)
+                s = "INSERT INTO ChannelVideos (ChannelID, VideoID, ChannelName, VideoLink, Title, ThumbnailURL, Likes, Comments) VALUES(%s, %s, %s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE ChannelName=VALUES(ChannelName), Title=VALUES(Title), ThumbnailURL=VALUES(ThumbnailURL), Likes=VALUES(Likes), Comments=VALUES(Comments)"
+                s1 = (channel_id, video_id, channel_name, link, title, thumbnail, likes, comment_count)
                 mycursor.execute(s, s1)
                 mydb.commit()
 
@@ -185,20 +188,24 @@ def index():
                                    'Thumbnail': b64_img}}
                 collection.update_one(filter, thumb_data, upsert=True)
 
-                mydict = {"Channel": CHANNEL_URL, "Link": link, "Title": title, "Thumbnail": thumbnail, "Likes": likes,
+                mydict = {"Channel": channel_name, "VideoLink": link, "Title": title, "Thumbnail": thumbnail, "Likes": likes,
                           "Comments": comment_count}
                 videos.append(mydict)
 
             driver.quit()
             return render_template('results.html', reviews=videos[0:(len(videos))])
+
         except Exception as e:
             print('The Exception message is: ', e)
             return 'something is wrong'
+
+    else:
+        return render_template('index.html')
 
 
 
 
 if __name__ == '__main__':
-    # app.run(host='127.0.0.1', port=8001, debug=True)
-    app.run(debug=True)
+    app.run(host='127.0.0.1', port=8001, debug=True)
+    # app.run(debug=True)
 
