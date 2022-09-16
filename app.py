@@ -165,7 +165,8 @@ def index():
 
                 #### Update MangoDB Comments
                 # MONGODB_URI="mongodb+srv://shubhangi:sangram123@sangram.jttnwlv.mongodb.net/?retryWrites=true&w=majority"
-                client = pymongo.MongoClient(MONGODB_URI)
+                # client = pymongo.MongoClient(MONGODB_URI)
+                client = pymongo.MongoClient(os.environ.get("MONGODB_URI"))
                 database = client['youtube']
                 collection = database['comments']
                 for (ids, author, text) in zip(comment_ids, comment_by, comment_text):
