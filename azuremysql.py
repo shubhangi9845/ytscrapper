@@ -21,12 +21,12 @@ mycursor = mydb.cursor()
 
 # mycursor.execute("CREATE DATABASE testdb")
 
-# mycursor.execute("DROP TABLE ChannelVideos")
+# mycursor.execute("CREATE TABLE ChannelVideos (ChannelID varchar(255) NOT NULL,VideoID varchar(255) NOT NULL,"
+#                  "ChannelName varchar(255),VideoLink varchar(255),Title varchar(450) CHARACTER SET utf8mb4,"
+#                  "ThumbnailURL varchar(450),Likes integer(10),Comments integer(10),Thumbnail varchar(450),"
+#                  "Download varchar(450),CommentsList varchar(450),PRIMARY KEY (ChannelId, VideoId))")
 
-mycursor.execute("CREATE TABLE ChannelVideos (ChannelID varchar(255) NOT NULL,VideoID varchar(255) NOT NULL,"
-                 "ChannelName varchar(255),VideoLink varchar(255),Title varchar(450) CHARACTER SET utf8mb4,"
-                 "ThumbnailURL varchar(450),Likes integer(10),Comments integer(10),Thumbnail varchar(450),"
-                 "Download varchar(450),CommentsList varchar(450),PRIMARY KEY (ChannelId, VideoId))")
+mycursor.execute("TRUNCATE TABLE ChannelVideos")
 
 # mycursor.execute("ALTER TABLE ChannelVideos ADD PRIMARY KEY(ChannelURL,VideoLink)")
 
