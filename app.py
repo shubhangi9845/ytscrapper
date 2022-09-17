@@ -19,12 +19,12 @@ option.add_argument('disable-dev-shm-usage')
 option.headless = True
 
 # Driver local path
-# DRIVER_PATH = r'/Users/sangrampatil/PycharmProjects/ytscrpper/chromedriver'
-# driver = webdriver.Chrome(executable_path=DRIVER_PATH, options=option)
+DRIVER_PATH = r'/Users/sangrampatil/PycharmProjects/ytscrpper/chromedriver'
+driver = webdriver.Chrome(executable_path=DRIVER_PATH, options=option)
 
 # Driver server path
-option.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-driver = webdriver.Chrome(executable_path=os.environ.get("DRIVER_PATH"), options=option)
+# option.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+# driver = webdriver.Chrome(executable_path=os.environ.get("DRIVER_PATH"), options=option)
 
 
 # mydb = conn.connect(
@@ -42,7 +42,7 @@ mydb = conn.connect(
   database="testdb",
   charset='utf8mb4'
 )
-
+mycursor = mydb.cursor()
 
 app = Flask(__name__)
 
@@ -94,7 +94,7 @@ def index():
             ############ Get Video information #################
 
             videos = []
-            for link in links[:1]:
+            for link in links[:5]:
                 driver.get(link)
                 driver.maximize_window()
                 time.sleep(1)
@@ -157,16 +157,16 @@ def index():
                 print(comment_ids)
 
                 ##### Update in MySQL
-                mycursor = mydb.cursor()
+
                 s = "INSERT INTO ChannelVideos (ChannelID, VideoID, ChannelName, VideoLink, Title, ThumbnailURL, Likes, Comments) VALUES(%s, %s, %s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE ChannelName=VALUES(ChannelName), Title=VALUES(Title), ThumbnailURL=VALUES(ThumbnailURL), Likes=VALUES(Likes), Comments=VALUES(Comments)"
                 s1 = (channel_id, video_id, channel_name, link, title, thumbnail, likes, comment_count)
                 mycursor.execute(s, s1)
                 mydb.commit()
 
                 #### Update MangoDB Comments
-                # MONGODB_URI="mongodb+srv://shubhangi:sangram123@sangram.jttnwlv.mongodb.net/?retryWrites=true&w=majority"
-                # client = pymongo.MongoClient(MONGODB_URI)
-                client = pymongo.MongoClient(os.environ.get("MONGODB_URI"))
+                MONGODB_URI="mongodb+srv://shubhangi:sangram123@sangram.jttnwlv.mongodb.net/?retryWrites=true&w=majority"
+                client = pymongo.MongoClient(MONGODB_URI)
+                # client = pymongo.MongoClient(os.environ.get("MONGODB_URI"))
                 database = client['youtube']
                 collection = database['comments']
                 for (ids, author, text) in zip(comment_ids, comment_by, comment_text):
@@ -208,6 +208,6 @@ def index():
 
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=8001, debug=True)
-    # app.run(debug=True)
+    # app.run(host='127.0.0.1', port=8001, debug=True)
+    app.run(debug=True)
 
